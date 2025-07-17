@@ -24,5 +24,6 @@ pip install -r requirements.txt
 PYTHONPATH=. pytest -q
 ```
 
-Tests that exercise `OpenAIAgent` require a valid `OPENAI_API_KEY` to be set in
-the environment. They will be skipped otherwise.
+Tests exercising `OpenAIAgent` use the OpenAI Python client `>=1.0`.
+Provide an `OPENAI_API_KEY` to run them against the live API or they will
+be skipped.
