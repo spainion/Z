@@ -9,7 +9,7 @@ This repository provides a modular multi-agent framework. To ensure agents built
 ## Adding Agents
 - Place agent modules under `zlamida_core/agents/` and register them in `AgentFactory`.
 - Agents should persist results to `ConvoGraph` so others can learn from prior runs.
-- Agents automatically record results to `convo_graph.json` unless a custom path is provided.
+- Agents automatically record results to `convo_graph.json` unless a custom path is provided via the `--memory` flag or `MEMORY_PATH` environment variable.
 - Logging is configured via `zlamida_core.core.log`. Use `log.get_logger(__name__)` in new modules.
 
 ## Syncing with External Systems

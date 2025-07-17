@@ -12,9 +12,9 @@ from .core import process_runner, runner
 from .core.log import get_logger
 
 
-def run_agent(agent_type: str, name: str, task: str) -> None:
+def run_agent(agent_type: str, name: str, task: str, memory_path: Path) -> None:
     logger = get_logger(__name__)
-    graph = ConvoGraph(Path("convo_graph.json"))
+    graph = ConvoGraph(memory_path)
     agent = AgentFactory.create(agent_type, name, memory_path=graph.path)
     result = agent.run(task)
     graph.append({"agent": name, "task": task, "result": result})
@@ -22,10 +22,14 @@ def run_agent(agent_type: str, name: str, task: str) -> None:
     print(result)
 
 
-def run_batch(tasks: Iterable[Tuple[str, str, str]], use_process: bool = False) -> None:
+def run_batch(
+    tasks: Iterable[Tuple[str, str, str]],
+    memory_path: Path,
+    use_process: bool = False,
+) -> None:
     """Run multiple agents concurrently and log results."""
     logger = get_logger(__name__)
-    graph = ConvoGraph(Path("convo_graph.json"))
+    graph = ConvoGraph(memory_path)
     run_fn = process_runner.run_agents if use_process else runner.run_agents
     results = run_fn([(a, n, t) for a, n, t in tasks])
     for agent_type, name, task in tasks:
@@ -37,6 +41,11 @@ def run_batch(tasks: Iterable[Tuple[str, str, str]], use_process: bool = False) 
 def main() -> None:
     parser = argparse.ArgumentParser(description="ZΛMIDΛ_CORE CLI")
     sub = parser.add_subparsers(dest="cmd", required=True)
+    parser.add_argument(
+        "--memory",
+        default="convo_graph.json",
+        help="Path to memory JSON file",
+    )
 
     run_p = sub.add_parser("run-agent", help="Run a single agent once")
     run_p.add_argument("agent_type", help="Registered agent type")
@@ -64,12 +73,17 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.cmd == "run-agent":
-        run_agent(args.agent_type, args.name, args.task)
+        run_agent(args.agent_type, args.name, args.task, Path(args.memory))
     elif args.cmd == "run-batch":
         task_specs = [tuple(t.split(',', 2)) for t in args.tasks]
-        run_batch(task_specs, use_process=args.process)
+        run_batch(task_specs, Path(args.memory), use_process=args.process)
     elif args.cmd == "serve":
-        uvicorn.run("zlamida_core.ui.server:app", host=args.host, port=args.port)
+        uvicorn.run(
+            "zlamida_core.ui.server:app",
+            host=args.host,
+            port=args.port,
+            reload=False,
+        )
 
 
 if __name__ == "__main__":

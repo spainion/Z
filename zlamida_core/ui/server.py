@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -11,7 +12,7 @@ from zlamida_core.core.log import get_logger
 
 app = FastAPI()
 
-graph = ConvoGraph(Path("convo_graph.json"))
+graph = ConvoGraph(Path(os.getenv("MEMORY_PATH", "convo_graph.json")))
 logger = get_logger(__name__)
 
 
