@@ -28,4 +28,5 @@ class AgentFactory:
 # Register default agents
 AgentFactory.register("echo", "zlamida_core.agents.echo_agent.EchoAgent")
 AgentFactory.register("openai", "zlamida_core.agents.openai_agent.OpenAIAgent")
+AgentFactory.register("shell", "zlamida_core.agents.shell_agent.ShellAgent")
 

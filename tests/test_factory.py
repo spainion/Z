@@ -20,3 +20,9 @@ def test_openai_agent(monkeypatch):
 
     agent = AgentFactory.create("openai", "tester")
     assert agent.run("hi") == "response"
+
+
+def test_shell_agent(tmp_path):
+    agent = AgentFactory.create("shell", "sh")
+    result = agent.run("echo hello")
+    assert result.strip() == "hello"
