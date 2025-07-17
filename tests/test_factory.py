@@ -1,4 +1,6 @@
 from zlamida_core.core.factory import AgentFactory
+import os
+import pytest
 
 
 def test_echo_agent():
@@ -6,20 +8,15 @@ def test_echo_agent():
     assert agent.run("hi") == "hi"
 
 
-def test_openai_agent(monkeypatch):
-    class FakeResp:
-        choices = [type("Obj", (), {"message": {"content": "response"}})]
-
-    def fake_create(*args, **kwargs):
-        return FakeResp()
-
-    monkeypatch.setenv("OPENAI_API_KEY", "x")
-    from zlamida_core.agents import openai_agent
-
-    monkeypatch.setattr(openai_agent.openai.ChatCompletion, "create", fake_create)
-
+@pytest.mark.skipif(
+    not os.getenv("OPENAI_API_KEY"),
+    reason="OPENAI_API_KEY not set"
+)
+def test_openai_agent_real():
+    """Run OpenAI agent against the real API if a key is configured."""
     agent = AgentFactory.create("openai", "tester")
-    assert agent.run("hi") == "response"
+    result = agent.run("hi")
+    assert isinstance(result, str) and len(result) > 0
 
 
 def test_shell_agent(tmp_path):

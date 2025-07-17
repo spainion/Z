@@ -23,3 +23,6 @@ Install dependencies and run tests:
 pip install -r requirements.txt
 PYTHONPATH=. pytest -q
 ```
+
+Tests that exercise `OpenAIAgent` require a valid `OPENAI_API_KEY` to be set in
+the environment. They will be skipped otherwise.
