@@ -33,3 +33,4 @@ def test_run_batch(tmp_path, monkeypatch):
     __main__.run_batch(tasks)
     data = json.loads(Path("convo_graph.json").read_text())
     assert any(entry["result"] == "hi" for entry in data)
+    assert Path(__file__).resolve().parents[1].joinpath("zlamida.log").exists()

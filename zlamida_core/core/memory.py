@@ -4,6 +4,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
+from .log import get_logger
+
+
+logger = get_logger(__name__)
+
 
 class ConvoGraph:
     """Simple append-only memory graph stored in JSON."""
@@ -14,10 +19,12 @@ class ConvoGraph:
         self.data: List[Dict[str, Any]] = []
         if self.path.exists():
             self.data = json.loads(self.path.read_text())
+            logger.info("Loaded %d entries from %s", len(self.data), self.path)
 
     def append(self, entry: Dict[str, Any]) -> None:
         self.data.append(entry)
         self.path.write_text(json.dumps(self.data, indent=2))
+        logger.info("Appended entry for %s", entry.get("agent"))
 
     def all(self) -> List[Dict[str, Any]]:
         return list(self.data)

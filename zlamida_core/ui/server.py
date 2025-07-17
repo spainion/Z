@@ -7,10 +7,12 @@ from pydantic import BaseModel
 
 from zlamida_core.core.factory import AgentFactory
 from zlamida_core.core.memory import ConvoGraph
+from zlamida_core.core.log import get_logger
 
 app = FastAPI()
 
 graph = ConvoGraph(Path("convo_graph.json"))
+logger = get_logger(__name__)
 
 
 class Task(BaseModel):
@@ -22,10 +24,12 @@ async def run_agent(agent_name: str, task: Task) -> dict:
     agent = AgentFactory.create(agent_name, agent_name)
     result = agent.run(task.text)
     graph.append({"agent": agent.name, "task": task.text, "result": result})
+    logger.info("%s -> %s", agent.name, result)
     return {"result": result}
 
 
 @app.get("/history")
 async def history() -> list[dict]:
+    logger.info("History requested")
     return graph.all()
 
