@@ -10,7 +10,8 @@ foundation with an agent factory, persistent memory graph, and a FastAPI-based U
 - **Memory**: `ConvoGraph` stores interactions in an append-only JSON file.
 - **UI**: Basic FastAPI server to run agents and inspect history.
 
-Run `python -m zlamida_core run-agent echo demo "hi"` to execute a sample agent or `python -m zlamida_core serve` to start the API. To use the `OpenAIAgent`, set the `OPENAI_API_KEY` environment variable.
+Run `python -m zlamida_core run-agent echo demo "hi"` to execute a single agent or `python -m zlamida_core serve` to start the API. To use the `OpenAIAgent`, set the `OPENAI_API_KEY` environment variable.
+Use `python -m zlamida_core run-batch --task echo,a,hi --task shell,b,"echo there"` to run agents concurrently. Pass `--process` to isolate agents in separate processes.
 
 - **Runner**: `run_agents` executes agents in threads, and `process_runner.run_agents` does so in separate processes.
 
