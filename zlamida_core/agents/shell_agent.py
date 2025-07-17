@@ -19,4 +19,6 @@ class ShellAgent(Agent):
             stderr=subprocess.STDOUT,
             text=True,
         )
-        return result.stdout.strip()
+        output = result.stdout.strip()
+        self._record(task, output)
+        return output

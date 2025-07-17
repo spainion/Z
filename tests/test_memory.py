@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 
 from zlamida_core.core.memory import ConvoGraph
+from zlamida_core.core.factory import AgentFactory
 
 
 def test_memory(tmp_path: Path):
@@ -17,3 +18,11 @@ def test_memory_creates_dirs(tmp_path: Path):
     graph = ConvoGraph(sub)
     graph.append({"msg": "hi"})
     assert sub.exists()
+
+
+def test_agent_records(tmp_path: Path) -> None:
+    path = tmp_path / "g.json"
+    agent = AgentFactory.create("echo", "t", memory_path=path)
+    agent.run("hello")
+    graph = ConvoGraph(path)
+    assert graph.all()[-1]["result"] == "hello"

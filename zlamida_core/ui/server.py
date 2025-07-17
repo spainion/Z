@@ -21,7 +21,7 @@ class Task(BaseModel):
 
 @app.post("/run/{agent_name}")
 async def run_agent(agent_name: str, task: Task) -> dict:
-    agent = AgentFactory.create(agent_name, agent_name)
+    agent = AgentFactory.create(agent_name, agent_name, memory_path=graph.path)
     result = agent.run(task.text)
     graph.append({"agent": agent.name, "task": task.text, "result": result})
     logger.info("%s -> %s", agent.name, result)

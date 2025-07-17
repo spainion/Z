@@ -15,7 +15,7 @@ from .core.log import get_logger
 def run_agent(agent_type: str, name: str, task: str) -> None:
     logger = get_logger(__name__)
     graph = ConvoGraph(Path("convo_graph.json"))
-    agent = AgentFactory.create(agent_type, name)
+    agent = AgentFactory.create(agent_type, name, memory_path=graph.path)
     result = agent.run(task)
     graph.append({"agent": name, "task": task, "result": result})
     logger.info("%s -> %s", name, result)
@@ -27,8 +27,8 @@ def run_batch(tasks: Iterable[Tuple[str, str, str]], use_process: bool = False) 
     logger = get_logger(__name__)
     graph = ConvoGraph(Path("convo_graph.json"))
     run_fn = process_runner.run_agents if use_process else runner.run_agents
-    results = run_fn(tasks)
-    for (agent_type, name, task) in tasks:
+    results = run_fn([(a, n, t) for a, n, t in tasks])
+    for agent_type, name, task in tasks:
         graph.append({"agent": name, "task": task, "result": results[name]})
         logger.info("%s -> %s", name, results[name])
         print(f"{name}: {results[name]}")

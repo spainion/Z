@@ -18,8 +18,12 @@ class ConvoGraph:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.data: List[Dict[str, Any]] = []
         if self.path.exists():
-            self.data = json.loads(self.path.read_text())
-            logger.info("Loaded %d entries from %s", len(self.data), self.path)
+            try:
+                self.data = json.loads(self.path.read_text())
+                logger.info("Loaded %d entries from %s", len(self.data), self.path)
+            except json.JSONDecodeError:
+                logger.warning("Corrupt memory file %s, starting fresh", self.path)
+                self.data = []
 
     def append(self, entry: Dict[str, Any]) -> None:
         self.data.append(entry)

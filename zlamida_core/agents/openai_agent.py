@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any
 
 import openai
@@ -13,8 +14,8 @@ from .base import Agent
 class OpenAIAgent(Agent):
     """Agent using OpenAI's API to generate responses."""
 
-    def __init__(self, name: str, model: str = "gpt-4o-mini") -> None:
-        super().__init__(name)
+    def __init__(self, name: str, model: str = "gpt-4o-mini", memory_path: Path | None = None) -> None:
+        super().__init__(name, memory_path)
         self.model = model
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
@@ -27,5 +28,7 @@ class OpenAIAgent(Agent):
             messages=[{"role": "user", "content": str(task)}],
             temperature=0.7,
         )
-        return completion.choices[0].message.content.strip()
+        result = completion.choices[0].message.content.strip()
+        self._record(task, result)
+        return result
 
