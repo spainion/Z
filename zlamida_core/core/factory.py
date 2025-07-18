@@ -33,4 +33,5 @@ AgentFactory.register(
     "orchestrator", "zlamida_core.agents.orchestrator_agent.OrchestratorAgent"
 )
 AgentFactory.register("web", "zlamida_core.agents.web_agent.WebAgent")
+AgentFactory.register("math", "zlamida_core.agents.math_agent.MathAgent")
 

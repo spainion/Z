@@ -5,7 +5,7 @@ foundation with an agent factory, persistent memory graph, and a FastAPI-based U
 
 ## Features
 
-- **Agents**: Base class with `EchoAgent`, API-backed `OpenAIAgent`, `ShellAgent` for shell commands, `WebAgent` for fetching URLs, and `OrchestratorAgent` for chaining agents.
+- **Agents**: Base class with `EchoAgent`, API-backed `OpenAIAgent`, `ShellAgent` for shell commands, `WebAgent` for fetching URLs, `MathAgent` for evaluating arithmetic, and `OrchestratorAgent` for chaining agents.
 - **AgentFactory**: Dynamically registers and creates agent instances.
 - **Memory**: `ConvoGraph` stores interactions in an append-only JSON file.
 - **UI**: Basic FastAPI server to run agents and inspect history.
@@ -17,6 +17,7 @@ Run `python -m zlamida_core run-agent echo demo "hi"` to execute a single agent 
 Use `python -m zlamida_core run-batch --task echo,a,hi --task shell,b,"echo there" --memory mygraph.json` to run agents concurrently. Pass `--process` to isolate agents in separate processes.
 `OrchestratorAgent` can chain tasks: `python -c "from zlamida_core.agents.orchestrator_agent import OrchestratorAgent; print(OrchestratorAgent('orch').run([('echo','a','hi'),('shell','b','echo there')]))"`.
 Run `python -m zlamida_core run-agent web fetch https://example.com` to fetch a web page via `WebAgent`. The agent sends a custom `User-Agent` header and times out after 10 seconds. Customize the header or timeout with the `WEB_AGENT_UA` and `WEB_AGENT_TIMEOUT` environment variables.
+Run `python -m zlamida_core run-agent math calc "2+2*3"` to evaluate an arithmetic expression with `MathAgent`.
 
 - **Runner**: `run_agents` executes agents in threads, and `process_runner.run_agents` does so in separate processes.
 
