@@ -26,12 +26,20 @@ def run_batch(
     tasks: Iterable[Tuple[str, str, str]],
     memory_path: Path,
     use_process: bool = False,
+    max_workers: int | None = None,
 ) -> None:
-    """Run multiple agents concurrently and log results."""
+    """Run multiple agents concurrently and log results.
+
+    Args:
+        tasks: Iterable of (agent_type, name, task) tuples.
+        memory_path: JSON file path for storing results.
+        use_process: Whether to use processes instead of threads.
+        max_workers: Limit the number of concurrent workers.
+    """
     logger = get_logger(__name__)
     graph = ConvoGraph(memory_path)
     run_fn = process_runner.run_agents if use_process else runner.run_agents
-    results = run_fn([(a, n, t) for a, n, t in tasks])
+    results = run_fn([(a, n, t) for a, n, t in tasks], max_workers=max_workers)
     for agent_type, name, task in tasks:
         graph.append({"agent": name, "task": task, "result": results[name]})
         logger.info("%s -> %s", name, results[name])
@@ -65,6 +73,12 @@ def main() -> None:
         action="store_true",
         help="Use process-based runner",
     )
+    batch_p.add_argument(
+        "--max-workers",
+        type=int,
+        default=None,
+        help="Maximum number of concurrent workers",
+    )
 
     serve_p = sub.add_parser("serve", help="Launch HTTP API server")
     serve_p.add_argument("--host", default="127.0.0.1")
@@ -76,7 +90,12 @@ def main() -> None:
         run_agent(args.agent_type, args.name, args.task, Path(args.memory))
     elif args.cmd == "run-batch":
         task_specs = [tuple(t.split(',', 2)) for t in args.tasks]
-        run_batch(task_specs, Path(args.memory), use_process=args.process)
+        run_batch(
+            task_specs,
+            Path(args.memory),
+            use_process=args.process,
+            max_workers=args.max_workers,
+        )
     elif args.cmd == "serve":
         uvicorn.run(
             "zlamida_core.ui.server:app",
