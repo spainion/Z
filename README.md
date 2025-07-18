@@ -16,7 +16,7 @@ foundation with an agent factory, persistent memory graph, and a FastAPI-based U
 Run `python -m zlamida_core run-agent echo demo "hi"` to execute a single agent or `python -m zlamida_core serve` to start the API. Use `--memory path/to/file.json` to customize the memory file. To use the `OpenAIAgent`, set the `OPENAI_API_KEY` environment variable. The server also reads `MEMORY_PATH` for its graph location.
 Use `python -m zlamida_core run-batch --task echo,a,hi --task shell,b,"echo there" --memory mygraph.json` to run agents concurrently. Pass `--process` to isolate agents in separate processes.
 `OrchestratorAgent` can chain tasks: `python -c "from zlamida_core.agents.orchestrator_agent import OrchestratorAgent; print(OrchestratorAgent('orch').run([('echo','a','hi'),('shell','b','echo there')]))"`.
-Run `python -m zlamida_core run-agent web fetch https://example.com` to fetch a web page via `WebAgent`. The agent sends a custom `User-Agent` header and times out after 10 seconds.
+Run `python -m zlamida_core run-agent web fetch https://example.com` to fetch a web page via `WebAgent`. The agent sends a custom `User-Agent` header and times out after 10 seconds. Customize the header or timeout with the `WEB_AGENT_UA` and `WEB_AGENT_TIMEOUT` environment variables.
 
 - **Runner**: `run_agents` executes agents in threads, and `process_runner.run_agents` does so in separate processes.
 
