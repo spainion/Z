@@ -32,4 +32,5 @@ AgentFactory.register("shell", "zlamida_core.agents.shell_agent.ShellAgent")
 AgentFactory.register(
     "orchestrator", "zlamida_core.agents.orchestrator_agent.OrchestratorAgent"
 )
+AgentFactory.register("web", "zlamida_core.agents.web_agent.WebAgent")
 
