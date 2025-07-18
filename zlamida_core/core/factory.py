@@ -38,4 +38,8 @@ AgentFactory.register(
     "parallel_orchestrator",
     "zlamida_core.agents.parallel_orchestrator_agent.ParallelOrchestratorAgent",
 )
+AgentFactory.register(
+    "async_openai",
+    "zlamida_core.agents.async_openai_agent.AsyncOpenAIAgent",
+)
 

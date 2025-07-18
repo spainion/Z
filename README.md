@@ -5,7 +5,7 @@ foundation with an agent factory, persistent memory graph, and a FastAPI-based U
 
 ## Features
 
-- **Agents**: Base class with `EchoAgent`, API-backed `OpenAIAgent`, `ShellAgent` for shell commands, `WebAgent` for fetching URLs, `MathAgent` for evaluating arithmetic, `OrchestratorAgent` for chaining agents, and `ParallelOrchestratorAgent` for concurrent execution with adjustable worker limits.
+- **Agents**: Base class with `EchoAgent`, API-backed `OpenAIAgent` and `AsyncOpenAIAgent`, `ShellAgent` for shell commands, `WebAgent` for fetching URLs, `MathAgent` for evaluating arithmetic, `OrchestratorAgent` for chaining agents, and `ParallelOrchestratorAgent` for concurrent execution with adjustable worker limits.
 - **AgentFactory**: Dynamically registers and creates agent instances.
 - **Memory**: `ConvoGraph` stores interactions in an append-only JSON file.
 - **UI**: Basic FastAPI server to run agents and inspect history.
@@ -14,6 +14,7 @@ foundation with an agent factory, persistent memory graph, and a FastAPI-based U
   `MEMORY_PATH` environment variable to specify a custom location.
 
 Run `python -m zlamida_core run-agent echo demo "hi"` to execute a single agent or `python -m zlamida_core serve` to start the API. Use `--memory path/to/file.json` to customize the memory file. To use the `OpenAIAgent`, set the `OPENAI_API_KEY` environment variable. The server also reads `MEMORY_PATH` for its graph location. The batch runner accepts `--max-workers` to control concurrency.
+To run the asynchronous variant, `AsyncOpenAIAgent`, use the same `OPENAI_API_KEY` and invoke `python -m zlamida_core run-agent async_openai ai "hello"`.
 Use `python -m zlamida_core run-batch --task echo,a,hi --task shell,b,"echo there" --memory mygraph.json` to run agents concurrently. Pass `--process` to isolate agents in separate processes or `--max-workers 1` to limit concurrency.
 `OrchestratorAgent` can chain tasks: `python -c "from zlamida_core.agents.orchestrator_agent import OrchestratorAgent; print(OrchestratorAgent('orch').run([('echo','a','hi'),('shell','b','echo there')]))"`.
 `ParallelOrchestratorAgent` runs tasks concurrently:

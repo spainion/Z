@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zlamida_core"
-version = "0.3.0"
+version = "0.3.1"
 description = "Modular multi-agent system"
 
 [tool.poetry.dependencies]
