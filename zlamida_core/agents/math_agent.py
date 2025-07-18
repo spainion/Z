@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 import operator as op
 from typing import Any
-from pathlib import Path
 
 from .base import Agent
 
@@ -31,8 +30,8 @@ class MathAgent(Agent):
     def _eval(self, expr: str) -> Any:
         """Evaluate an arithmetic expression using AST parsing."""
         def _eval_node(node: ast.AST) -> Any:
-            if isinstance(node, ast.Num):
-                return node.n
+            if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+                return node.value
             if isinstance(node, ast.UnaryOp) and type(node.op) in self._OPERATORS:
                 return self._OPERATORS[type(node.op)](_eval_node(node.operand))
             if isinstance(node, ast.BinOp) and type(node.op) in self._OPERATORS:
