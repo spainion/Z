@@ -1,4 +1,3 @@
-import functools
 import http.server
 import socketserver
 import threading
