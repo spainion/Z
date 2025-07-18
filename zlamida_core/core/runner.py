@@ -11,17 +11,18 @@ from .factory import AgentFactory
 TaskSpec = Tuple[str, str, Any]
 
 
-def run_agents(tasks: Iterable[TaskSpec]) -> Dict[str, Any]:
+def run_agents(tasks: Iterable[TaskSpec], max_workers: int | None = None) -> Dict[str, Any]:
     """Run multiple agents in parallel.
 
     Args:
         tasks: Iterable of (agent_type, name, task) tuples.
+        max_workers: Maximum number of concurrent threads.
 
     Returns:
         Mapping of agent names to their results.
     """
     results: Dict[str, Any] = {}
-    with ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_name = {
             executor.submit(
                 AgentFactory.create(agent_type, name).run, task

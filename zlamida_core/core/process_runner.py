@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from multiprocessing import Process, Queue
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Any, Dict, Iterable, Tuple
 
 from .factory import AgentFactory
@@ -10,24 +10,22 @@ from .factory import AgentFactory
 TaskSpec = Tuple[str, str, Any]
 
 
-def _run_agent(q: Queue, agent_type: str, name: str, task: Any) -> None:
+def _run_agent(agent_type: str, name: str, task: Any) -> tuple[str, Any]:
     agent = AgentFactory.create(agent_type, name)
-    q.put((name, agent.run(task)))
+    return name, agent.run(task)
 
 
-def run_agents(tasks: Iterable[TaskSpec]) -> Dict[str, Any]:
+def run_agents(
+    tasks: Iterable[TaskSpec], max_workers: int | None = None
+) -> Dict[str, Any]:
     """Execute agents concurrently using processes."""
-    q: Queue = Queue()
-    procs = [
-        Process(target=_run_agent, args=(q, agent_type, name, task))
-        for agent_type, name, task in tasks
-    ]
-    for p in procs:
-        p.start()
     results: Dict[str, Any] = {}
-    for _ in procs:
-        name, result = q.get()
-        results[name] = result
-    for p in procs:
-        p.join()
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        future_to_name = {
+            executor.submit(_run_agent, agent_type, name, task): name
+            for agent_type, name, task in tasks
+        }
+        for future in as_completed(future_to_name):
+            name, result = future.result()
+            results[name] = result
     return results
